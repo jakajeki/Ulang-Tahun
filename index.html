@@ -279,11 +279,6 @@ const photos = [
     console.error("Gagal memuat Firebase. Periksa koneksi internet atau matikan AdBlocker Anda!");
   }
 </script>
-
-});
-
-// ==========================
-// PROSES AMBIL DATA (REALTIME DISPLAY)
 // ==========================
 db.ref("ucapan").on("child_added", function(snapshot) {
   const data = snapshot.val();
