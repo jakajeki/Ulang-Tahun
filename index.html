@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <title>iPortfolio Bootstrap Template - Index</title>
+  <title>Happy Birthday</title>
   <meta content="" name="description">
   <meta content="" name="keywords">
   <!-- Favicons -->
@@ -242,7 +242,6 @@ const photos = [
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
 <script>
-  // HANYA ada satu konfigurasi di sini
   const firebaseConfig = {
     apiKey: "AIzaSyA7KEBw57CKK_J7AgaMdtBAYbEws_JNNIo",
     authDomain: "ucapan-ultah-345c3.firebaseapp.com",
@@ -253,43 +252,33 @@ const photos = [
     appId: "1:463648625577:web:839fdc87b3721222b62ab8"
   };
 
-  // Inisialisasi Firebase (Cukup sekali)
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-  
-  console.log("Firebase berhasil terhubung!");
+  // Proteksi jika jaringan gagal memuat Firebase agar tidak crash total
+  if (typeof firebase !== 'undefined') {
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    console.log("Firebase berhasil terhubung!");
 
-  // ==========================
-  // PROSES KIRIM DATA (SUBMIT FORM)
-  // ==========================
-// ==========================
-// PROSES KIRIM DATA (SUBMIT FORM)
-// ==========================
-document.getElementById("formUcapan").addEventListener("submit", function(e) {
-  e.preventDefault();
+    document.getElementById("formUcapan").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const nama = document.getElementById("nama-ultah").value;
+      const pesan = document.getElementById("pesan-ultah").value;
 
-  // Membaca ID unik yang baru agar tidak bentrok dengan bawaan template
-  const nama = document.getElementById("nama-ultah").value;
-  const pesan = document.getElementById("pesan-ultah").value;
-
-  console.log("Data yang terbaca oleh browser:", { nama: nama, pesan: pesan });
-
-  // Validasi akhir untuk memastikan teks benar-benar ada
-  if (nama.trim() !== "" && pesan.trim() !== "") {
-    
-    // 1. KIRIMAN UTAMA (Aman di dalam validasi)
-    db.ref("ucapan").push({
-      nama: nama,
-      pesan: pesan
+      if (nama.trim() !== "" && pesan.trim() !== "") {
+        db.ref("ucapan").push({ nama: nama, pesan: pesan });
+        this.reset();
+      }
     });
 
-    // Reset isi form setelah berhasil dikirim
-    this.reset();
-    console.log("Data berhasil terkirim ke Firebase!");
-
+    db.ref("ucapan").on("child_added", function(snapshot) {
+      const data = snapshot.val();
+      const div = document.createElement("div");
+      div.innerHTML = `<strong>${data.nama}</strong><br>${data.pesan}<hr>`;
+      document.getElementById("listPesan").prepend(div);
+    });
   } else {
-    alert("Gagal mengirim! Kotak input terdeteksi kosong.");
+    console.error("Gagal memuat Firebase. Periksa koneksi internet atau matikan AdBlocker Anda!");
   }
+</script>
 
   // KHUSUS DI SINI: Kode duplikat yang tadinya menggantung di bawah sini SUDAH DIHAPUS TOTAL
 });
